@@ -1,0 +1,4 @@
+interface:
+  display_name: "go-errors usage"
+  short_description: "Use go.osspkg.com/errors safely and idiomatically"
+  default_prompt: "Use the go-errors library APIs according to repository contracts and examples."
