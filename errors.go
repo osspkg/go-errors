@@ -6,6 +6,8 @@
 // Package errors provides error construction, wrapping, and inspection helpers.
 package errors
 
+import "strings"
+
 type errorEntity struct {
 	cause   error
 	message string
@@ -18,14 +20,20 @@ func New(message string) error {
 }
 
 func (v *errorEntity) Error() string {
-	message := v.message
-	if v.cause != nil {
-		if message != "" {
-			message += ": "
-		}
-		message += v.cause.Error()
+	if v.cause == nil {
+		return v.message + v.trace
 	}
-	return message + v.trace
+
+	cause := v.cause.Error()
+	var message strings.Builder
+	message.Grow(len(v.message) + len(cause) + len(v.trace) + 2)
+	message.WriteString(v.message)
+	if v.message != "" {
+		message.WriteString(": ")
+	}
+	message.WriteString(cause)
+	message.WriteString(v.trace)
+	return message.String()
 }
 
 // Cause returns the underlying cause.

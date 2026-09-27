@@ -8,6 +8,7 @@ package errors
 import (
 	e "errors"
 	"fmt"
+	"strings"
 )
 
 // Wrapf returns nil when cause is nil. Otherwise it prefixes cause with a
@@ -99,14 +100,14 @@ type joinedError struct {
 }
 
 func (v *joinedError) Error() string {
-	message := ""
+	var message strings.Builder
 	for _, cause := range v.causes {
-		if message != "" {
-			message += ": "
+		if message.Len() > 0 {
+			message.WriteString(": ")
 		}
-		message += cause.Error()
+		message.WriteString(cause.Error())
 	}
-	return message
+	return message.String()
 }
 
 func (v *joinedError) Unwrap() []error {

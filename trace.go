@@ -6,9 +6,9 @@
 package errors
 
 import (
-	"errors"
-	"fmt"
 	"runtime"
+	"strconv"
+	"strings"
 )
 
 const (
@@ -24,11 +24,7 @@ func Trace(cause error, message string, args ...any) error {
 		return nil
 	}
 
-	wrapped := func() *errorEntity {
-		target := &errorEntity{}
-		_ = errors.As(err, &target)
-		return target
-	}()
+	wrapped := err.(*errorEntity)
 	wrapped.trace = runtimeTrace(traceDepth)
 	return wrapped
 }
@@ -38,13 +34,17 @@ func runtimeTrace(depth int) string {
 	n := runtime.Callers(traceCallersSkip, pcs)
 	frames := runtime.CallersFrames(pcs[:n])
 
-	var result string
+	var result strings.Builder
+	var lineBuffer [20]byte
 	for {
 		frame, more := frames.Next()
 		if !more {
 			break
 		}
-		result += fmt.Sprintf("\n\t[trace] %s:%d", frame.Function, frame.Line)
+		result.WriteString("\n\t[trace] ")
+		result.WriteString(frame.Function)
+		result.WriteByte(':')
+		result.Write(strconv.AppendInt(lineBuffer[:0], int64(frame.Line), 10))
 	}
-	return result
+	return result.String()
 }
