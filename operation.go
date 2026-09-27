@@ -12,7 +12,7 @@ import (
 
 // Wrapf returns nil when cause is nil. Otherwise it prefixes cause with a
 // formatted message and preserves cause for errors.Is and errors.As.
-func Wrapf(cause error, message string, args ...interface{}) error {
+func Wrapf(cause error, message string, args ...any) error {
 	if cause == nil {
 		return nil
 	}

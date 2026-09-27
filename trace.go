@@ -18,7 +18,7 @@ const (
 
 // Trace wraps cause with a formatted message and appends a stack trace.
 // It returns nil when cause is nil.
-func Trace(cause error, message string, args ...interface{}) error {
+func Trace(cause error, message string, args ...any) error {
 	err := Wrapf(cause, message, args...)
 	if err == nil {
 		return nil

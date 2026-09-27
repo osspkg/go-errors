@@ -82,7 +82,7 @@ func TestUnit_Wrapf(t *testing.T) {
 	type args struct {
 		cause   error
 		message string
-		args    []interface{}
+		args    []any
 	}
 	tests := []struct {
 		name    string
@@ -115,7 +115,7 @@ func TestUnit_Wrapf(t *testing.T) {
 			args: args{
 				cause:   e.New("err1"),
 				message: "bad ip %s",
-				args:    []interface{}{"127.0.0.1"},
+				args:    []any{"127.0.0.1"},
 			},
 			want:    "bad ip 127.0.0.1: err1",
 			wantErr: true,
