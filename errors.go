@@ -8,6 +8,8 @@ package errors
 
 import "strings"
 
+const causeSeparator = ": "
+
 type errorEntity struct {
 	cause   error
 	message string
@@ -26,13 +28,13 @@ func (v *errorEntity) Error() string {
 
 	cause := v.cause.Error()
 	var message strings.Builder
-	message.Grow(len(v.message) + len(cause) + len(v.trace) + 2)
-	message.WriteString(v.message)
+	message.Grow(len(v.message) + len(cause) + len(v.trace) + len(causeSeparator))
+	_, _ = message.WriteString(v.message)
 	if v.message != "" {
-		message.WriteString(": ")
+		_, _ = message.WriteString(causeSeparator)
 	}
-	message.WriteString(cause)
-	message.WriteString(v.trace)
+	_, _ = message.WriteString(cause)
+	_, _ = message.WriteString(v.trace)
 	return message.String()
 }
 

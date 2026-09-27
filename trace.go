@@ -6,6 +6,7 @@
 package errors
 
 import (
+	"errors"
 	"runtime"
 	"strconv"
 	"strings"
@@ -14,6 +15,7 @@ import (
 const (
 	traceDepth       = 10
 	traceCallersSkip = 4
+	decimalBase      = 10
 )
 
 // Trace wraps cause with a formatted message and appends a stack trace.
@@ -24,7 +26,11 @@ func Trace(cause error, message string, args ...any) error {
 		return nil
 	}
 
-	wrapped := err.(*errorEntity)
+	wrapped := &errorEntity{}
+	if !errors.As(err, &wrapped) {
+		wrapped.cause = err
+	}
+
 	wrapped.trace = runtimeTrace(traceDepth)
 	return wrapped
 }
@@ -41,10 +47,10 @@ func runtimeTrace(depth int) string {
 		if !more {
 			break
 		}
-		result.WriteString("\n\t[trace] ")
-		result.WriteString(frame.Function)
-		result.WriteByte(':')
-		result.Write(strconv.AppendInt(lineBuffer[:0], int64(frame.Line), 10))
+		_, _ = result.WriteString("\n\t[trace] ")
+		_, _ = result.WriteString(frame.Function)
+		_ = result.WriteByte(':')
+		_, _ = result.Write(strconv.AppendInt(lineBuffer[:0], int64(frame.Line), decimalBase))
 	}
 	return result.String()
 }

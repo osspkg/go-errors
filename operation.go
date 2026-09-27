@@ -103,9 +103,9 @@ func (v *joinedError) Error() string {
 	var message strings.Builder
 	for _, cause := range v.causes {
 		if message.Len() > 0 {
-			message.WriteString(": ")
+			_, _ = message.WriteString(causeSeparator)
 		}
-		message.WriteString(cause.Error())
+		_, _ = message.WriteString(cause.Error())
 	}
 	return message.String()
 }
